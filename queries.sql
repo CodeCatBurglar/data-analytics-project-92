@@ -55,4 +55,64 @@ GROUP BY
 ORDER BY
     EXTRACT(DOW FROM s.sale_date), seller; -- Устанавливаем порядок сортировки результатов сначала по дню недели, потом по продавцу
 
+-- age_groups
+SELECT
+    CASE
+        WHEN age BETWEEN 16 AND 25 THEN '16-25' -- Определяем возрастную группу на основе возраста
+        WHEN age BETWEEN 26 AND 40 THEN '26-40'
+        ELSE '40+'
+    END AS age_category,
+    COUNT(*) AS count -- Подсчёт клиентов по каждой группе
+FROM
+    customers
+GROUP BY
+    age_category
+ORDER BY
+    age_category;
+
+-- customers_by_month
+SELECT
+    TO_CHAR(s.sale_date, 'YYYY-MM') AS date, -- Преобразовываем дату в необходимый формат значения
+    COUNT(DISTINCT s.customer_id) AS total_customers, -- Считаем уникальных покупателей
+    SUM(p.price * s.quantity) AS income -- Считаем выручку
+FROM
+    sales s
+INNER JOIN
+    products p ON s.product_id = p.product_id
+GROUP BY
+    date
+ORDER BY
+    date;
+
+-- special_offer
+SELECT
+    c.first_name || ' ' || c.last_name AS customer,
+    s.sale_date,
+    CONCAT(e.first_name, ' ', e.last_name) AS seller
+FROM
+    sales s
+INNER JOIN
+    customers c ON s.customer_id = c.customer_id
+INNER JOIN
+    employees e ON s.sales_person_id = e.employee_id
+INNER JOIN (
+    SELECT
+        s.customer_id,
+        MIN(s.sale_date) AS first_sale_date
+    FROM
+        sales s
+    INNER JOIN
+        products p ON s.product_id = p.product_id
+    WHERE
+        p.price = 0
+    GROUP BY
+        s.customer_id
+) AS fp ON s.customer_id = fp.customer_id AND s.sale_date = fp.first_sale_date /*
+Делаем соединение с подзапросом, который выбирает первые покупки покупателей, у которых цена продукта равна 0. 
+подзапрос вычисляет дату первой покупки для каждого покупателя с нулевой ценой продукта. 
+затем основной запрос соединяет результат этого подзапроса с таблицей sales по идентификатору покупателя и дате первой покупки.
+*/
+    s.customer_id;
+
+
 
