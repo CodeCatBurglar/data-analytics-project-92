@@ -120,7 +120,7 @@ ORDER BY
 SELECT
     TO_CHAR(s.sale_date, 'YYYY-MM') AS selling_month, -- Преобразовываем дату в необходимый формат 
     COUNT(DISTINCT s.customer_id) AS total_customers, -- Считаем уникальных покупателей
-    ROUND(SUM(p.price * s.quantity), 0) AS income -- Считаем и округляем выручку
+    FLOOR(SUM(p.price * s.quantity)) AS income -- Считаем и округляем выручку
 FROM
     sales s
 INNER JOIN
