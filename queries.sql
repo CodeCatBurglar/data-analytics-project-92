@@ -74,7 +74,7 @@ ORDER BY
 SELECT
     seller,
     day_of_week,
-    ROUND(SUM(income), 0) AS income -- Округляем и суммируем выручку за каждый день недели для каждого продавца
+    FLOOR(SUM(income)) AS income -- Округляем и суммируем выручку за каждый день недели для каждого продавца
 FROM (
     SELECT
         CONCAT(e.first_name, ' ', e.last_name) AS seller,
