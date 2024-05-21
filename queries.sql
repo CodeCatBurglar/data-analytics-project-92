@@ -49,7 +49,8 @@ INNER JOIN
 GROUP BY
     seller
 ORDER BY
-    income DESC;
+    income DESC
+LIMIT 10;
 
 
 -- worst sellers everrrrrrr
